@@ -1,0 +1,9 @@
+CREATE DATABASE rule_engine;
+USE rule_engine;
+
+CREATE TABLE rules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    rule_string VARCHAR(1000),
+    ast JSON
+);
