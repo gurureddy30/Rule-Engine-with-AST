@@ -1,0 +1,137 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rule Engine UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create New Rule</h2>
+        <div>Example: age > 30 AND department = 'Sales'</div>
+        <input type="text" id="ruleString" placeholder="Enter rule string">
+        <button onclick="createRule()">Create Rule</button>
+        <div id="ruleResult" class="result"></div>
+    </div>
+
+    <div class="container">
+        <h2>Evaluate Rules</h2>
+        <div>Example: {"age": 35, "department": "Sales", "salary": 60000}</div>
+        <input type="number" id="ruleId" placeholder="Enter rule ID">
+        <textarea id="jsonData" rows="4" placeholder="Enter JSON data"></textarea>
+        <button onclick="evaluateRules()">Evaluate</button>
+        <div id="results" class="result"></div>
+    </div>
+
+
+    <script>
+        async function createRule() {
+            const ruleString = document.getElementById('ruleString').value;
+            const resultDiv = document.getElementById('ruleResult');
+            
+            try {
+                const response = await fetch('/rules/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        rule_string: ruleString
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    resultDiv.textContent = 'Success: ' + data.message;
+                    resultDiv.style.color = 'green';
+                } else {
+                    resultDiv.textContent = 'Error: ' + data.detail;
+                    resultDiv.style.color = 'red';
+                }
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message;
+                resultDiv.style.color = 'red';
+            }
+        }
+
+        async function evaluateRules() {
+            const jsonData = document.getElementById('jsonData').value;
+            const ruleId = document.getElementById('ruleId').value;
+            const resultDiv = document.getElementById('results');
+            
+            if (!ruleId) {
+                resultDiv.textContent = 'Error: Please enter a rule ID';
+                resultDiv.style.color = 'red';
+                return;
+            }
+
+            try {
+                // Parse the JSON input to verify it's valid
+                const parsedData = JSON.parse(jsonData);
+                
+                const response = await fetch('/evaluate/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: parsedData,
+                        rule_id: parseInt(ruleId)
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    resultDiv.textContent = JSON.stringify(data, null, 2);
+                    resultDiv.style.color = 'green';
+                } else {
+                    resultDiv.textContent = 'Error: ' + data.detail;
+                    resultDiv.style.color = 'red';
+                }
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message;
+                resultDiv.style.color = 'red';
+            }
+        }
+    </script>
+</body>
+</html>
