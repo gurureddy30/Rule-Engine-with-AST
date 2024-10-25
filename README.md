@@ -97,6 +97,12 @@ python main.py
 The application will initialize and be ready for processing business rules and serving content.
 
 
+![Alt text](image_path)
+![Screenshot (14)](https://github.com/user-attachments/assets/7fbc23cf-f311-44bc-b4f8-bb54cfdd7e52)
+
+
+
+
 ## ✨ Features
 Rule Engine 🛠️
 The rule engine provides a flexible way to define and process business logic, with custom rules that can be tailored to specific business needs. This allows for greater flexibility and extensibility.
@@ -140,6 +146,9 @@ The project includes a simple HTML template (index.html), making it easy to serv
  Create a new branch for your feature or bug fix.
  Submit a pull request with a description of your changes.
  Please ensure your code follows the project's coding style and passes all tests.
+
+
+
 
 
 
