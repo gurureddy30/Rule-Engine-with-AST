@@ -36,12 +36,13 @@ def home(request: Request):
 
 class RuleCreate(BaseModel):
     rule_string: str
+    rule_name: str
 
 @app.post("/rules/")
 def create_new_rule(rule: RuleCreate, db: Session = Depends(get_db)):
     try:
         ast = create_rule(rule.rule_string)
-        db_rule = Rule(rule_string=rule.rule_string, ast=ast)
+        db_rule = Rule(rule_string=rule.rule_string,name=rule.rule_name,ast=ast)
         db.add(db_rule)
         db.commit()
         return {"message": "Rule created successfully"}
@@ -54,7 +55,7 @@ class EvaluateData(BaseModel):
 
 class RuleInput(BaseModel):
     data: Dict[str, Any]
-    rule_id: int
+    rule_name: str
 
     @validator('data')
     def validate_data_types(cls, v):
@@ -65,18 +66,16 @@ class RuleInput(BaseModel):
 
 @app.post("/evaluate/")
 def evaluate_rules(eval_data: RuleInput, db: Session = Depends(get_db)):
-    rule = db.query(Rule).filter(Rule.id == eval_data.rule_id).first()
+    rule = db.query(Rule).filter(Rule.name == eval_data.rule_name).first()
     if not rule:
-        raise HTTPException(status_code=404, detail=f"Rule with id {eval_data.rule_id} not found")
+        raise HTTPException(status_code=404, detail=f"Rule with name {eval_data.rule_name} not found")
     
     try:
         result = evaluate_rule(rule.ast, eval_data.data)
-        return {rule.id: result}
+        return result
     except Exception as e:
-        return {rule.id: f"Error evaluating rule: {str(e)}"}
+        return {rule.name: f"Error evaluating rule: {str(e)}"}
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8002)
-
-
+    uvicorn.run(app, host="127.0.0.1", port=8000)
