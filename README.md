@@ -98,7 +98,8 @@ The application will initialize and be ready for processing business rules and s
 
 
 ![Alt text](image_path)
-![Screenshot (14)](https://github.com/user-attachments/assets/7fbc23cf-f311-44bc-b4f8-bb54cfdd7e52)
+![Screenshot (15)](https://github.com/user-attachments/assets/a978b777-915f-4d22-a805-b219efd2622e)
+
 
 
 
